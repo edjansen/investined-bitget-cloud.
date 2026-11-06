@@ -1,0 +1,45 @@
+{
+  "requested_utc": "2026-11-06T09:43:00+01:00",
+  "source": "investined terminal screenshot",
+  "groups": {
+    "futures_pullbacks": [
+      "APT",
+      "DOT",
+      "FARTCOIN",
+      "ICNT",
+      "PENDLE",
+      "WLFI",
+      "XLM"
+    ],
+    "global_radar": [
+      "THE",
+      "AXTI",
+      "FWDI",
+      "CRWVSTOCK",
+      "QCOM",
+      "SNDK",
+      "STXX",
+      "ANIME",
+      "ASTS",
+      "SOPH",
+      "SPCX",
+      "LINK",
+      "DOGE",
+      "NIL"
+    ],
+    "spot_entry_list": [
+      "PUMP",
+      "Q",
+      "XRP",
+      "ADA",
+      "AIO",
+      "AERO",
+      "XPL",
+      "ENA",
+      "SUI",
+      "WLD",
+      "ONDO",
+      "HUMA"
+    ]
+  }
+}
