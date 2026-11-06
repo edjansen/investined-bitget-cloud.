@@ -1,45 +1,44 @@
 {
-  "requested_utc": "2026-11-06T09:43:00+01:00",
-  "source": "investined terminal screenshot",
+  "requested_utc": "2026-11-06T11:25:00+01:00",
+  "source": "new terminal screenshot 11:24",
   "groups": {
     "futures_pullbacks": [
       "APT",
-      "DOT",
       "FARTCOIN",
       "ICNT",
-      "PENDLE",
-      "WLFI",
-      "XLM"
+      "MARSCOIN",
+      "NEAR",
+      "UNI"
     ],
     "global_radar": [
-      "THE",
-      "AXTI",
-      "FWDI",
-      "CRWVSTOCK",
-      "QCOM",
-      "SNDK",
-      "STXX",
-      "ANIME",
-      "ASTS",
-      "SOPH",
-      "SPCX",
-      "LINK",
-      "DOGE",
-      "NIL"
+      "FARTCOIN",
+      "M",
+      "WDC",
+      "ZRO",
+      "ENA",
+      "NEAR",
+      "MVLL",
+      "RE",
+      "CRDO",
+      "CAKE",
+      "TSM",
+      "EIGEN",
+      "SKHYNIX",
+      "NCSKWDC2USD"
     ],
     "spot_entry_list": [
-      "PUMP",
-      "Q",
-      "XRP",
-      "ADA",
-      "AIO",
-      "AERO",
       "XPL",
-      "ENA",
-      "SUI",
+      "CLANKER",
       "WLD",
+      "GWEI",
+      "ENA",
+      "Q",
+      "PUMP",
+      "AIO",
+      "JCT",
+      "WLFI",
       "ONDO",
-      "HUMA"
+      "AERO"
     ]
   }
 }
