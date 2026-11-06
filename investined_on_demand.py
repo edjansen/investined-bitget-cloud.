@@ -31,8 +31,8 @@ def coins(value):
             raise ValueError('Invalid contract name')
         if coin not in unique:
             unique.append(coin)
-    if not 1 <= len(unique) <= 10:
-        raise ValueError('Expected 1-10 unique coins')
+    if not 1 <= len(unique) <= 20:
+        raise ValueError('Expected 1-20 unique coins')
     return unique
 
 
