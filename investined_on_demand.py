@@ -59,9 +59,22 @@ def inspect(ex, coin):
     symbol = market['symbol']
     result['symbol'] = symbol
     result['contract_id'] = market['id']
-    if not contract_valid({'coin': coin, 'symbol': symbol}, market):
+    # Research-only exception for positively identified Bitget RWA/stock perps.
+    # The core crypto Pullback Entry Engine remains unchanged and never approves them.
+    crypto_ok = contract_valid({'coin': coin, 'symbol': symbol}, market)
+    info = market.get('info') or {}
+    rwa_ok = (
+        market.get('active') is True
+        and info.get('isRwa') == 'YES'
+        and str(info.get('baseCoin') or '').upper() == coin
+        and info.get('quoteCoin') == 'USDT'
+        and info.get('symbol') == market.get('id')
+        and info.get('symbolStatus') == 'normal'
+    )
+    if not crypto_ok and not rwa_ok:
         result.update(status='REJECTED', reason='Contract identity or asset gate')
         return result
+    result['instrument_type'] = 'CRYPTO_USDT_PERP' if crypto_ok else 'RWA_USDT_PERP_RESEARCH_ONLY'
     try:
         analyzed = analyze(ex, symbol)
         if not analyzed:
@@ -82,6 +95,7 @@ def inspect(ex, coin):
                             if isinstance(bid, (float, int)) and
                             isinstance(ask, (float, int)) and 0 < bid <= ask else None}
         result['status'] = 'ANALYZED'
+        result['close_5m'] = candles['5m'][-1][4]
         for method, field, key in [('fetch_funding_rate', 'funding_rate', 'fundingRate'),
                                    ('fetch_open_interest', 'open_interest', 'openInterestAmount')]:
             try:
@@ -106,18 +120,21 @@ def main():
                   requested=requested, results=results,
                   note='Read-only, no orders. A project-integrity guarantee is impossible.')
     Path('analysis_report.json').write_text(json.dumps(clean(report), indent=2, allow_nan=False))
-    lines = ['# INVESTINED LABS — Bitget coin review', '',
+    lines = ['# INVESTINED LABS — Bitget market research', '',
              f'UTC: {stamp}. 1D/4H/1H/15m/5m closed OHLCV candles.', '',
-             '| Coin | Contract | 1H structure | 4H location | 5m RVOL |',
-             '| --- | --- | --- | --- | --- |']
+             '| Coin | Instrument | 4H | 1H | 4H location | 5m RVOL | Spread % | Status |',
+             '| --- | --- | --- | --- | --- | --- | --- | --- |']
     for r in results:
         if r['status'] != 'ANALYZED':
-            lines.append(f"| {r['coin']} | {r['status']} | - | {r.get('reason', '-')} | - |")
+            lines.append(f"| {r['coin']} | {r.get('symbol','-')} | - | - | - | - | - | {r['status']}: {r.get('reason', '-')} |")
         else:
-            lines.append(f"| {r['coin']} | {r['symbol']} | {r['timeframes']['1h']['structure']} | "
-                         f"{r['timeframes']['4h']['loc']:.2f} | {r['timeframes']['5m']['rvol']} |")
+            t = r['timeframes']
+            spr = r['market'].get('spread_pct')
+            lines.append(f"| {r['coin']} | {r['instrument_type']} | {t['4h']['structure']} | "
+                         f"{t['1h']['structure']} | {t['4h']['loc']:.2f} | "
+                         f"{t['5m']['rvol']} | {round(spr,4) if spr is not None else '-'} | ANALYZED |")
     lines += ['', 'Volledige candlesticks, indicatoren en redenen: analysis_report.json.',
-              'Geen automatische orders; alleen gesloten candles worden beoordeeld.']
+              'Geen automatische orders; RWA-contracten zijn uitsluitend technisch onderzoek, niet crypto-entrybevestiging.']
     Path('analysis_report.md').write_text('\n'.join(lines)+'\n')
     print('\n'.join(lines), flush=True)
     if not any(r['status'] == 'ANALYZED' for r in results):
