@@ -1,0 +1,42 @@
+name: Investined Bitget cloud market check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '2-59/5 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: investined-market-check
+  cancel-in-progress: false
+
+jobs:
+  market-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run existing tests
+        run: python -m unittest discover -p 'test_*.py'
+      - name: Read-only Bitget market check
+        env:
+          SCAN_SYMBOLS: ${{ vars.SCAN_SYMBOLS }}
+        run: python cloud_scan.py prepare --budget 150
+      - name: Publish diagnostic scan output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitget-market-check
+          path: |
+            outbox.json
+            state/dedup.json
+          if-no-files-found: ignore
+          retention-days: 1
