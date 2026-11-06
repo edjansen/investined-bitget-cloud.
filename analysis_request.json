@@ -1,7 +1,21 @@
 {
   "coins": [
-    "BTC"
+    "BTC",
+    "SNXX",
+    "SNDK",
+    "AMD",
+    "AMZN",
+    "PLTR",
+    "NVDA",
+    "INTC",
+    "MRVL",
+    "SPCX",
+    "QQQ",
+    "TSLA",
+    "SKHY",
+    "GOOGL",
+    "TSM"
   ],
-  "purpose": "initial_public_market_data_smoke_test",
-  "requested_utc": "2026-11-06T07:48:03.592Z"
+  "purpose": "manual screenshot multi-timeframe evaluation",
+  "requested_utc": "2026-11-06T08:15:57.436Z"
 }
