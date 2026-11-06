@@ -1,0 +1,49 @@
+name: Investined on-demand Bitget research
+
+on:
+  workflow_dispatch:
+    inputs:
+      coins:
+        description: 'Coin tickers, comma-separated; e.g. BTC,ETH'
+        required: true
+        default: 'BTC'
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - analysis_request.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: investined-on-demand
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install existing dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Analyze only requested symbols via public Bitget data
+        env:
+          ANALYZE_COINS: ${{ inputs.coins }}
+        run: python investined_on_demand.py
+      - name: Preserve timestamped analysis and all OHLCV candles
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitget-on-demand-report
+          path: |
+            analysis_report.json
+            analysis_report.md
+          if-no-files-found: warn
+          retention-days: 7
