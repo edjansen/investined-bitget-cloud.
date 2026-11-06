@@ -1,0 +1,35 @@
+name: Investined terminal screenshot review
+on:
+  push:
+    branches: [main]
+    paths:
+      - terminal_review_request.json
+permissions:
+  contents: read
+concurrency:
+  group: investined-terminal-reviews
+  cancel-in-progress: false
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install existing dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Inspect Bitget candles and entry gates
+        run: python -u terminal_review.py
+      - name: Preserve the full screenshot analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitget-terminal-review
+          path: |
+            terminal_review_report.json
+            terminal_review_report.md
+          if-no-files-found: warn
+          retention-days: 7
